@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	
+			
+	<xs:annotation>
+  		<xs:appinfo>version 1.030</xs:appinfo>
+  	</xs:annotation>
+  	
+	<xs:include schemaLocation="global.xsd"/>
+	<xs:include schemaLocation="identifier.xsd"/>
+	<xs:include schemaLocation="person.xsd"/>
+	<xs:complexType name="assessment">
+		<xs:sequence>
+			<xs:element name="action">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="none"/>
+						<xs:enumeration value="describe"/>
+						<xs:enumeration value="create"/>
+						<xs:enumeration value="update participants"/>
+						<xs:enumeration value="update professionals"/>
+						<xs:enumeration value="update status"/>
+						<xs:enumeration value="update all"/>
+						<xs:enumeration value="delete"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element minOccurs="0" name="original_request_id" type="xs:string"/>
+			<!--used only in conjunction with assessment_inquiry event-->
+			<xs:element minOccurs="0" name="original_requestor" type="partner_system"/>
+			<xs:element name="assessment_id" type="identifier"/>
+			<xs:element name="assessment_name" type="xs:string"/>
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="assessment_participant" type="assessment_participant"/>
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="assessment_professional" type="assessment_professional"/>
+			<xs:element name="status" type="assessment_status"/>
+			<xs:element name="assessment_create_dt" type="xs:date"/>
+			<xs:element minOccurs="0" name="assessment_accepted_dt" nillable="true" type="xs:date"/>
+			<xs:element name="county" type="county"/>
+			<xs:element maxOccurs="1" minOccurs="0" name="comments" type="xs:string"/>
+			<xs:element maxOccurs="1" minOccurs="0" name="assessment_email" type="xs:string"/>
+			<!--used to email documents directly to the assessment-->
+			<xs:element name="associated_intakes" type="identifier" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="assessment_inquiry">
+<!--used to request a populated case record-->
+		<xs:sequence>
+			<xs:element minOccurs="0" name="request_id" type="xs:string"/>
+			<xs:element name="requestor" type="partner_system"/>
+			<xs:element name="assessment_id" type="identifier"/>
+			<xs:element name="assessment_owner" type="partner_system"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="assessment_participant">
+		<xs:sequence>
+			<xs:element name="person" type="person"/>
+			<xs:element name="focus_child" type="xs:boolean"/>
+			<xs:element maxOccurs="1" minOccurs="0" name="involvement_begin_dt" nillable="true" type="xs:date"/>
+			<xs:element maxOccurs="1" minOccurs="0" name="involvement_end_dt" nillable="true" type="xs:date"/>
+			<xs:element maxOccurs="1" minOccurs="0" name="comments" type="xs:string"/>
+			<xs:element name="household_member" type="xs:boolean"/>
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="participant_relationship" type="participant_relationship"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="assessment_professional">
+		<xs:sequence>
+			<xs:element name="person" type="person"/>
+			<xs:element minOccurs="0" name="secondary_id" type="identifier"/>
+<!--to be used to pass a legacy user or staff ID different from their primary person ID-->
+			<xs:element name="assessment_role">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="FCM"/>
+						<xs:enumeration value="Supervisor"/>
+						<xs:enumeration value="Probation officer"/>
+						<xs:enumeration value="Other"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element minOccurs="0" name="involvement_start_dt" nillable="true" type="xs:date"/>
+			<xs:element minOccurs="0" name="involvement_end_dt" nillable="true" type="xs:date"/>
+			<xs:element maxOccurs="1" minOccurs="0" name="comments" type="xs:string"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="assessment_status">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="In Progress"/>
+			<xs:enumeration value="In Review"/>
+			<xs:enumeration value="Substantiated"/>
+			<xs:enumeration value="Unsubstantiated"/>
+			<xs:enumeration value="Editing"/>
+			<xs:enumeration value="Withdrawn - Screenout"/>  <!--for withdrawn intakes-->
+			<xs:enumeration value="Withdrawn - Duplicate"/> 
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>
